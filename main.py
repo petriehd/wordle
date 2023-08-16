@@ -1,4 +1,5 @@
 import os, random
+from colorama import Fore
 
 def GetWordList(filePath):
   with open(filePath, 'r') as file:
@@ -17,6 +18,8 @@ def PrintBoard():
     for i in row: 
       output = output + i + '|' 
     print(output)
+    print("\033[0;37;42m Testing ")
+
 
 def CheckWord(word, row):
   # Check correct length

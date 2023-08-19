@@ -3,10 +3,6 @@ from resources import Colours
 import random, pygame
 
 # Can take this out into init function
-Board = []
-for i in range(5): 
-  for j in range(6): 
-    Board.append(Tile)
 guessList = GetWordList('guessList.txt').split('\n')
 wordList = GetWordList('wordList.txt').split('\n')
     
@@ -20,10 +16,17 @@ pygame.display.set_caption('Wordle')
 window.fill(Colours.BACKGROUND)
 
 # Playing board formatting
-rect = pygame.Rect(350,40,400,600)
-pygame.draw.rect(window, Colours.GRID_BORDER, rect)
+rect =(350,40,400,474)
+board = pygame.Rect(rect)
+
+Board = []
+for i in range(5): 
+  for j in range(6): 
+    Board.append(Tile((i,j), rect))
+
+pygame.draw.rect(window, Colours.GRID_BORDER, board)
 for tile in Board:
-  tile.draw()
+  tile.draw(window)
 
 
 def main():

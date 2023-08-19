@@ -1,17 +1,19 @@
 import os, pygame
 from resources import Colours
 
-EMPTY = 0
-INVALID = 1
-HIT_OTHER = 2
-HIT = 3
+BORDER_WIDTH = 5
 
 class Tile:
-
-  def __init__(self, index) -> None:
-    self.status = EMPTY
+  # index = (row, col)
+  # boardRect = (left, top, width, height)
+  def __init__(self, index, boardRect) -> None:
     self.colour = Colours.BACKGROUND
-    self.rect = pygame.Rect(350 + index[0]*36.8, 40 + index[1]*36.8, 36.8, 36.8)
+
+    width = (boardRect[2] - 6 * BORDER_WIDTH) / 5
+    height = (boardRect[3] - 7 * BORDER_WIDTH) / 6
+    left = boardRect[0] + BORDER_WIDTH + index[0] * (width + BORDER_WIDTH)
+    top = boardRect[1] + BORDER_WIDTH + index[1] * (height + BORDER_WIDTH)
+    self.rect = pygame.Rect(left, top, width, height)
 
   def draw(self, surface):
     pygame.draw.rect(surface, self.colour, self.rect)

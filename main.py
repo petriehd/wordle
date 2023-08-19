@@ -1,71 +1,52 @@
-import os, random
-from colorama import Fore
+from game import *
+from resources import Colours
+import random, pygame
 
-def GetWordList(filePath):
-  with open(filePath, 'r') as file:
-    return file.read()
-
-board = [[' ' for i in range(5)] for i in range(6)]
+# Can take this out into init function
+Board = []
+for i in range(5): 
+  for j in range(6): 
+    Board.append(Tile)
 guessList = GetWordList('guessList.txt').split('\n')
 wordList = GetWordList('wordList.txt').split('\n')
-
-def PrintBoard():
-  # Clears terminal
-  # os.system('cls' if os.name == 'nt' else 'clear')
-
-  for row in board:
-    output = '|'
-    for i in row: 
-      output = output + i + '|' 
-    print(output)
-
-
-def CheckWord(word, row, answer):
-  # Check correct length
-  if (len(word) != 5): 
-    print('Word not of length 5!') 
-    return False
-  # Check a valid word
-  if (word not in guessList):
-    print('Not a valid word!')
-    return False
-  
-  # Check against answer
-  # Need to update this to return these values or work on below
-  greens = 0
-  yellows = 0
-  for i in range(5):
-    if word[i] == answer[i]: 
-      greens += 1
-      continue
-    if word[i] in answer:
-      yellows += 1
-
-  print(greens, yellows)
-
-  for i in range(5): board[row][i] = word[i]
-  return True
-
-
-  
-
-
     
+pygame.init()
+
+# Screen formatting
+windowWidth = 1100
+windowHeight = 700
+window = pygame.display.set_mode((windowWidth, windowHeight))
+pygame.display.set_caption('Wordle')
+window.fill(Colours.BACKGROUND)
+
+# Playing board formatting
+rect = pygame.Rect(350,40,400,600)
+pygame.draw.rect(window, Colours.GRID_BORDER, rect)
+for tile in Board:
+  tile.draw()
+
+
 def main():
+  correct = random.choice(wordList)
 
-  word = random.choice(wordList)
+  play = True
+  count = 0
+  while (play):
+    for event in pygame.event.get():
+      if event.type == pygame.QUIT:
+        play = False
+    pygame.display.update()
 
-
-  row = 0
-  win = False
-  while (row < 6):
     newWord = input('Enter word choice: ')
-    if newWord == word: 
+    if newWord == correct: 
       win = True  
       break
-    if CheckWord(newWord, row, word):
-      PrintBoard()
-      row += 1
+    if CheckWord(newWord, count, correct, guessList, board):
+      PrintBoard(board)
+      count += 1
+
+    if count > 5:
+      play = False
 
   if win:
     print('You Win!')

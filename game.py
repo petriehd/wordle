@@ -1,5 +1,5 @@
 import os, pygame
-from resources import Colours
+from resources import Colours, Locations
 
 BORDER_WIDTH = 5
 
@@ -8,6 +8,7 @@ class Tile:
   # boardRect = (left, top, width, height)
   def __init__(self, index, boardRect) -> None:
     self.colour = Colours.BACKGROUND
+    self.letter = ''
 
     width = (boardRect[2] - 6 * BORDER_WIDTH) / 5
     height = (boardRect[3] - 7 * BORDER_WIDTH) / 6
@@ -17,6 +18,27 @@ class Tile:
 
   def draw(self, surface):
     pygame.draw.rect(surface, self.colour, self.rect)
+
+  def drawLetter(self, surface):
+    pygame.draw.rect(surface, self.colour, self.rect)
+    font = pygame.font.Font(None, 42)
+
+    textColour = ''
+    if self.colour == Colours.BACKGROUND: textColour = Colours.GRID_BORDER
+    else: textColour = Colours.BACKGROUND
+
+    text = font.render(self.letter, True, textColour)
+    surface.blit(text, self.rect.center)
+
+
+def InitBoard(boardRect):
+  Board = []
+  for i in range(5): 
+    for j in range(6): 
+      Board.append(Tile((i,j), boardRect))
+
+  return Board
+
 
 def GetWordList(filePath):
   with open(filePath, 'r') as file:
@@ -32,28 +54,34 @@ def PrintBoard(board):
       output = output + i + '|' 
     print(output)
 
-def CheckWord(word, currRow, answer, guessList, board):
-  # Check correct length
-  if (len(word) != 5): 
-    print('Word not of length 5!') 
-    return False
-  # Check a valid word
-  if (word not in guessList):
-    print('Not a valid word!')
+def CheckWord(currWord, answer, guessList, row, board, window):
+  font = pygame.font.Font(None, 36)
+  if currWord not in guessList:
+    text = font.render("Not a valid Word!", True, Colours.GRID_BORDER)
+    window.blit(text, Locations.BOARD_PRINTOUT)
     return False
   
-  # Check against answer
-  # Need to update this to return these values or work on below
-  greens = 0
-  yellows = 0
+  # Stops multiple tiles of same letter being flagged as valid
+  lettersRemaining = answer
   for i in range(5):
-    if word[i] == answer[i]: 
-      greens += 1
-      continue
-    if word[i] in answer:
-      yellows += 1
+    index = row + i * 6
+    if currWord[i] == answer[i]:
+      board[index].colour = Colours.TILE_HIT
+      board[index].drawLetter(window)
+      lettersRemaining = lettersRemaining[:i] + lettersRemaining[i + 1:]
+    elif currWord[i] in lettersRemaining:
+      board[index].colour = Colours.TILE_HIT_OTHER
+      board[index].drawLetter(window)
 
+      letterFoundIndex = answer.index(currWord[i])
+      lettersRemaining = lettersRemaining[:letterFoundIndex] + lettersRemaining[letterFoundIndex + 1:]
+    else:
+      board[index].colour = Colours.TILE_INVALID
+    
+    print(lettersRemaining)
 
-  for i in range(5): board[currRow][i] = word[i]
   return True
+
+  
+
 

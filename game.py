@@ -73,10 +73,11 @@ def CheckWord(currWord, answer, guessList, row, board, window):
       board[index].colour = Colours.TILE_HIT_OTHER
       board[index].drawLetter(window)
 
-      letterFoundIndex = answer.index(currWord[i])
+      letterFoundIndex = lettersRemaining.index(currWord[i])
       lettersRemaining = lettersRemaining[:letterFoundIndex] + lettersRemaining[letterFoundIndex + 1:]
     else:
       board[index].colour = Colours.TILE_INVALID
+      board[index].drawLetter(window)
     
     print(lettersRemaining)
 

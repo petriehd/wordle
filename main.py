@@ -2,9 +2,9 @@ from game import *
 from resources import Colours
 import random, pygame
 
-# Can take this out into init function
 guessList = GetWordList('guessList.txt').split('\n')
-wordList = GetWordList('wordList.txt').split('\n')
+# wordList = GetWordList('wordList.txt').split('\n')
+wordFrequency = {}
     
 pygame.init()
 
@@ -25,7 +25,19 @@ for tile in Board:
   tile.draw(window)
 
 def main():
-  correct = random.choice(wordList)
+  correct = random.choice(guessList)
+
+
+
+  totalInstances = 0
+  words = FilterWordFrequency('unigram_freq.csv', guessList)
+  for word in words:
+    totalInstances += int(word[1])
+
+  for word in words:
+    wordFrequency[word[0]] = (int(word[1]) / totalInstances)
+  print(wordFrequency)
+
 
   play = True
   currRow = 0
@@ -58,21 +70,6 @@ def main():
         
     pygame.display.update()
 
-    # newWord = input('Enter word choice: ')
-    # if newWord == correct: 
-    #   win = True  
-    #   break
-    # if CheckWord(newWord, count, correct, guessList, board):
-    #   PrintBoard(board)
-    #   count += 1
-
-    # if count > 5:
-    #   play = False
-
-  if win:
-    print('You Win!')
-  else:
-    print('GameOver')
 
 main()
 

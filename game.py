@@ -30,7 +30,6 @@ class Tile:
     text = font.render(self.letter, True, textColour)
     surface.blit(text, self.rect.center)
 
-
 def InitBoard(boardRect):
   Board = []
   for i in range(5): 
@@ -38,7 +37,6 @@ def InitBoard(boardRect):
       Board.append(Tile((i,j), boardRect))
 
   return Board
-
 
 def GetWordList(filePath):
   with open(filePath, 'r') as file:
@@ -83,6 +81,25 @@ def CheckWord(currWord, answer, guessList, row, board, window):
 
   return True
 
+
+
+
+
+
+
+def FilterWordFrequency(filePath, guessList):
+  contents = ''
+  with open(filePath, 'r') as file:
+    contents = file.read()
+  
+  rows = contents.split('\n')
+  output = []
+  for i in range(len(rows)):
+    curr = rows[i].split(',')
+    if len(curr[0]) == 5:
+      if curr[0] in guessList:
+        output.append(curr)
   
 
+  return output
 

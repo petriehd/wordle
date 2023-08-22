@@ -28,7 +28,8 @@ def main():
   correct = random.choice(guessList)
 
 
-
+  # Just need to add in base probability for all words in guess list and not in words
+  # Then write to file
   totalInstances = 0
   words = FilterWordFrequency('unigram_freq.csv', guessList)
   for word in words:

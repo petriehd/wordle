@@ -3,9 +3,7 @@ from resources import Colours
 import random, pygame
 
 guessList = GetWordList('guessList.txt').split('\n')
-# wordList = GetWordList('wordList.txt').split('\n')
-wordFrequency = {}
-    
+
 pygame.init()
 
 # Screen formatting
@@ -26,19 +24,7 @@ for tile in Board:
 
 def main():
   correct = random.choice(guessList)
-
-
-  # Just need to add in base probability for all words in guess list and not in words
-  # Then write to file
-  totalInstances = 0
-  words = FilterWordFrequency('unigram_freq.csv', guessList)
-  for word in words:
-    totalInstances += int(word[1])
-
-  for word in words:
-    wordFrequency[word[0]] = (int(word[1]) / totalInstances)
-  print(wordFrequency)
-
+  print(correct)
 
   play = True
   currRow = 0
@@ -63,10 +49,13 @@ def main():
           currWord += key
 
         if event.key == pygame.K_RETURN and currCol == 5:
-          if CheckWord(currWord, correct, guessList, currRow, Board, window):
+          outcome = CheckWord(currWord, correct, guessList, currRow, Board, window)
+          if outcome[0]:
             currRow += 1
             currCol = 0
             currWord = ''
+
+            print(GetPossibleWords(outcome[1], guessList))
 
         
     pygame.display.update()

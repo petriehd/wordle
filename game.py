@@ -57,9 +57,11 @@ def CheckWord(currWord, answer, guessList, row, board, window):
   if currWord not in guessList:
     text = font.render("Not a valid Word!", True, Colours.GRID_BORDER)
     window.blit(text, Locations.BOARD_PRINTOUT)
-    return False
+    return (False, None)
   
   # Stops multiple tiles of same letter being flagged as valid
+  # Can pull out all below into seperate function
+  pattern = [0] * 5
   lettersRemaining = answer
   for i in range(5):
     index = row + i * 6
@@ -67,39 +69,70 @@ def CheckWord(currWord, answer, guessList, row, board, window):
       board[index].colour = Colours.TILE_HIT
       board[index].drawLetter(window)
       lettersRemaining = lettersRemaining[:i] + lettersRemaining[i + 1:]
+
+      # working on pattern identification
+      pattern[i] = currWord[i]
     elif currWord[i] in lettersRemaining:
       board[index].colour = Colours.TILE_HIT_OTHER
       board[index].drawLetter(window)
 
       letterFoundIndex = lettersRemaining.index(currWord[i])
       lettersRemaining = lettersRemaining[:letterFoundIndex] + lettersRemaining[letterFoundIndex + 1:]
+    
+      # working on pattern identification
+      pattern.append(currWord[i])
     else:
       board[index].colour = Colours.TILE_INVALID
       board[index].drawLetter(window)
     
-    print(lettersRemaining)
+    print(pattern)
 
-  return True
+  return (True, pattern)
+
+def GetPossibleWords(pattern, guessList):
+  
+  available = guessList
+  for i in range(len(pattern)):
+    if pattern[i] != 0:
+      if i < 5:
+        available = [guess for guess in available if guess[i] == pattern[i]]
+      else:
+        available = [guess for guess in available if pattern[i] in guess]
+
+  return available
 
 
 
-
-
-
-
+# Used once off to create word frequency
 def FilterWordFrequency(filePath, guessList):
+
   contents = ''
   with open(filePath, 'r') as file:
     contents = file.read()
-  
+
   rows = contents.split('\n')
-  output = []
+  output = {}
+  totalInstances = 0
   for i in range(len(rows)):
     curr = rows[i].split(',')
+
     if len(curr[0]) == 5:
       if curr[0] in guessList:
-        output.append(curr)
-  
+        output[curr[0]] = curr[1]
+        totalInstances += int(curr[1])
+        guessList.remove(curr[0])
+
+  writeToFile = []
+  for i in output:
+    output[i] = int(output[i]) / totalInstances
+
+  # Get remainder from guesslist and give constant value
+  for i in guessList:
+    output[i] = 0.00000020036
+
+  for i in output:
+    with open('wordFrequency.csv', 'a') as file:
+      file.write(str(i) + ',' + str(output[i]) + '\n')
 
   return output
 

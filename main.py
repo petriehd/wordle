@@ -24,6 +24,7 @@ for tile in Board:
 
 def main():
   correct = random.choice(guessList)
+  print(correct)
 
   play = True
   currRow = 0
@@ -48,10 +49,13 @@ def main():
           currWord += key
 
         if event.key == pygame.K_RETURN and currCol == 5:
-          if CheckWord(currWord, correct, guessList, currRow, Board, window):
+          outcome = CheckWord(currWord, correct, guessList, currRow, Board, window)
+          if outcome[0]:
             currRow += 1
             currCol = 0
             currWord = ''
+
+            print(GetPossibleWords(outcome[1], guessList))
 
         
     pygame.display.update()

@@ -57,12 +57,11 @@ def CheckWord(currWord, answer, guessList, row, board, window):
   if currWord not in guessList:
     text = font.render("Not a valid Word!", True, Colours.GRID_BORDER)
     window.blit(text, Locations.BOARD_PRINTOUT)
-    return False
+    return (False, None)
   
   # Stops multiple tiles of same letter being flagged as valid
   # Can pull out all below into seperate function
   pattern = [0] * 5
-
   lettersRemaining = answer
   for i in range(5):
     index = row + i * 6
@@ -88,9 +87,20 @@ def CheckWord(currWord, answer, guessList, row, board, window):
     
     print(pattern)
 
-  return True
+  return (True, pattern)
 
-# def GetPossibleWords(pattern, guessList):
+def GetPossibleWords(pattern, guessList):
+  
+  available = guessList
+  for i in range(len(pattern)):
+    if pattern[i] != 0:
+      if i < 5:
+        available = [guess for guess in available if guess[i] == pattern[i]]
+      else:
+        available = [guess for guess in available if pattern[i] in guess]
+
+  return available
+
 
 
 # Used once off to create word frequency

@@ -60,6 +60,9 @@ def CheckWord(currWord, answer, guessList, row, board, window):
     return False
   
   # Stops multiple tiles of same letter being flagged as valid
+  # Can pull out all below into seperate function
+  pattern = [0] * 5
+
   lettersRemaining = answer
   for i in range(5):
     index = row + i * 6
@@ -67,26 +70,30 @@ def CheckWord(currWord, answer, guessList, row, board, window):
       board[index].colour = Colours.TILE_HIT
       board[index].drawLetter(window)
       lettersRemaining = lettersRemaining[:i] + lettersRemaining[i + 1:]
+
+      # working on pattern identification
+      pattern[i] = currWord[i]
     elif currWord[i] in lettersRemaining:
       board[index].colour = Colours.TILE_HIT_OTHER
       board[index].drawLetter(window)
 
       letterFoundIndex = lettersRemaining.index(currWord[i])
       lettersRemaining = lettersRemaining[:letterFoundIndex] + lettersRemaining[letterFoundIndex + 1:]
+    
+      # working on pattern identification
+      pattern.append(currWord[i])
     else:
       board[index].colour = Colours.TILE_INVALID
       board[index].drawLetter(window)
     
-    print(lettersRemaining)
+    print(pattern)
 
   return True
 
+# def GetPossibleWords(pattern, guessList):
 
 
-
-
-
-
+# Used once off to create word frequency
 def FilterWordFrequency(filePath, guessList):
 
   contents = ''

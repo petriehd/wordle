@@ -3,9 +3,7 @@ from resources import Colours
 import random, pygame
 
 guessList = GetWordList('guessList.txt').split('\n')
-# wordList = GetWordList('wordList.txt').split('\n')
-wordFrequency = {}
-    
+
 pygame.init()
 
 # Screen formatting

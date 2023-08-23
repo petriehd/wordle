@@ -27,13 +27,6 @@ for tile in Board:
 def main():
   correct = random.choice(guessList)
 
-
-
-  words = FilterWordFrequency('unigram_freq.csv', guessList)
-
-  
-
-
   play = True
   currRow = 0
   currCol = 0

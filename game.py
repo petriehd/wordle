@@ -105,15 +105,17 @@ def FilterWordFrequency(filePath, guessList):
         totalInstances += int(curr[1])
         guessList.remove(curr[0])
 
-  count = 0
+  writeToFile = []
   for i in output:
     output[i] = int(output[i]) / totalInstances
-    if count == 0:
-      count += 1
 
   # Get remainder from guesslist and give constant value
   for i in guessList:
     output[i] = 0.00000020036
+
+  for i in output:
+    with open('wordFrequency.csv', 'a') as file:
+      file.write(str(i) + ',' + str(output[i]) + '\n')
 
   return output
 

@@ -88,18 +88,32 @@ def CheckWord(currWord, answer, guessList, row, board, window):
 
 
 def FilterWordFrequency(filePath, guessList):
+
   contents = ''
   with open(filePath, 'r') as file:
     contents = file.read()
-  
+
   rows = contents.split('\n')
-  output = []
+  output = {}
+  totalInstances = 0
   for i in range(len(rows)):
     curr = rows[i].split(',')
+
     if len(curr[0]) == 5:
       if curr[0] in guessList:
-        output.append(curr)
-  
+        output[curr[0]] = curr[1]
+        totalInstances += int(curr[1])
+        guessList.remove(curr[0])
+
+  count = 0
+  for i in output:
+    output[i] = int(output[i]) / totalInstances
+    if count == 0:
+      count += 1
+
+  # Get remainder from guesslist and give constant value
+  for i in guessList:
+    output[i] = 0.00000020036
 
   return output
 

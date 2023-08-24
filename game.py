@@ -89,8 +89,6 @@ def CheckWord(currWord, answer, guessList, row, board, window):
     else:
       board[index].colour = Colours.TILE_INVALID
       board[index].drawLetter(window)
-    
-    print(pattern)
 
   return (True, pattern)
 
@@ -111,16 +109,16 @@ def GetPossibleWords(pattern, guessList):
 def PrintAvailableWords(available, window):
   sortedWords = sorted(available, key=lambda x: x[1], reverse=True)
   count = len(sortedWords)
-  top10 = sortedWords[:10]
+  top10 = sortedWords[:20]
 
   font = pygame.font.Font(None, 36)
   wordCount = font.render(f"Words Available: {count}", True, Colours.GRID_BORDER)
   window.blit(wordCount, Locations.AVAILABLE_WORD_COUNT)
-  firstWord = Locations.AVAILABLE_WORD
+  wordLocation = Locations.AVAILABLE_WORD
   for word in top10:
-    wordText = font.render(f"{word[0]}:  {word[1]}", True, Colours.GRID_BORDER)
-    window.blit(wordText, firstWord)
-    firstWord[1] += 20
+    wordText = font.render(f"{word[0]}", True, Colours.GRID_BORDER)
+    window.blit(wordText, wordLocation)
+    wordLocation = (wordLocation[0], wordLocation[1] + 25)
 
 
   return (count, top10)

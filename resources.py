@@ -9,3 +9,5 @@ class Colours:
 
 class Locations:
     BOARD_PRINTOUT = (450, 540)
+    AVAILABLE_WORD_COUNT = (50, 20)
+    AVAILABLE_WORD = (50, 40)

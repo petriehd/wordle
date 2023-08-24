@@ -40,7 +40,12 @@ def InitBoard(boardRect):
 
 def GetWordList(filePath):
   with open(filePath, 'r') as file:
-    return file.read()
+    temp = file.read().split('\n')
+    output = []
+    for i in range(len(temp)):
+      output.append(temp[i].split(','))
+    
+    return output
   
 def PrintBoard(board):
   # Clears terminal
@@ -54,7 +59,7 @@ def PrintBoard(board):
 
 def CheckWord(currWord, answer, guessList, row, board, window):
   font = pygame.font.Font(None, 36)
-  if currWord not in guessList:
+  if not WordInGuessList(currWord, guessList):
     text = font.render("Not a valid Word!", True, Colours.GRID_BORDER)
     window.blit(text, Locations.BOARD_PRINTOUT)
     return (False, None)
@@ -84,24 +89,46 @@ def CheckWord(currWord, answer, guessList, row, board, window):
     else:
       board[index].colour = Colours.TILE_INVALID
       board[index].drawLetter(window)
-    
-    print(pattern)
 
   return (True, pattern)
 
 def GetPossibleWords(pattern, guessList):
   
   available = guessList
-  for i in range(len(pattern)):
-    if pattern[i] != 0:
-      if i < 5:
-        available = [guess for guess in available if guess[i] == pattern[i]]
-      else:
-        available = [guess for guess in available if pattern[i] in guess]
+  for char in pattern:
+    if char == 0:
+      continue
+    index = pattern.index(char)
+    if index < 5:
+      available = [guess for guess in available if char == guess[0][index]]
+    else:
+      available = [guess for guess in available if char in guess[0]]
 
   return available
 
+def PrintAvailableWords(available, window):
+  sortedWords = sorted(available, key=lambda x: x[1], reverse=True)
+  count = len(sortedWords)
+  top10 = sortedWords[:20]
 
+  font = pygame.font.Font(None, 36)
+  wordCount = font.render(f"Words Available: {count}", True, Colours.GRID_BORDER)
+  window.blit(wordCount, Locations.AVAILABLE_WORD_COUNT)
+  wordLocation = Locations.AVAILABLE_WORD
+  for word in top10:
+    wordText = font.render(f"{word[0]}", True, Colours.GRID_BORDER)
+    window.blit(wordText, wordLocation)
+    wordLocation = (wordLocation[0], wordLocation[1] + 25)
+
+
+  return (count, top10)
+
+def WordInGuessList(word, guessList):
+  for guess in guessList:
+    if guess[0] == word:
+      return True
+  
+  return False
 
 # Used once off to create word frequency
 def FilterWordFrequency(filePath, guessList):

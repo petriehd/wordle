@@ -2,7 +2,7 @@ from game import *
 from resources import Colours
 import random, pygame
 
-guessList = GetWordList('guessList.txt').split('\n')
+guessList = GetWordList('wordFrequency.csv')
 
 pygame.init()
 
@@ -23,13 +23,14 @@ for tile in Board:
   tile.draw(window)
 
 def main():
-  correct = random.choice(guessList)
+  correct = random.choice(guessList)[0]
   print(correct)
 
   play = True
   currRow = 0
   currCol = 0
   currWord = ''
+  availableWords = []
   while (play):
     for event in pygame.event.get():
       index = currRow + currCol * 6
@@ -55,7 +56,8 @@ def main():
             currCol = 0
             currWord = ''
 
-            print(GetPossibleWords(outcome[1], guessList))
+            availableWords = GetPossibleWords(outcome[1], guessList)
+            PrintAvailableWords(availableWords, window)
 
         
     pygame.display.update()

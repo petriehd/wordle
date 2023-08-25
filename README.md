@@ -4,7 +4,8 @@
 1. - [X] Create base similator in terminal 
    - [ ] Finalise all rules and scores
 2. - [ ] Implement next guess options and probability      (*In Progress*)
-   - [ ] Add weightings to words
-   - [ ] Display Most probable next guess
-3. - [ ] Add in entropy calculators and integrate with probability calculations       (*To do*)
-4. TBA      (*To do*)
+   - [X] Display Most probable next guess
+3. - [ ] Implement Entropy     (*To do*)
+   - [ ] Across normal distribution
+   - [ ] Display on screen
+4. - [ ] Craete playing strategies    (*To do*)

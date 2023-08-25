@@ -60,7 +60,7 @@ def GetWordList(filePath):
     
     return output
   
-def CheckWord(currWord, answer, guessList, row, board, window):
+def CheckWord(currWord, answer, guessList, row, board, window, pattern):
   font = pygame.font.Font(None, 36)
   if not WordInGuessList(currWord, guessList):
     text = font.render("Not a valid Word!", True, Colours.GRID_BORDER)
@@ -69,7 +69,6 @@ def CheckWord(currWord, answer, guessList, row, board, window):
   
   # Stops multiple tiles of same letter being flagged as valid
   # Can pull out all below into seperate function
-  pattern = [0] * 5
   lettersRemaining = answer
   for i in range(5):
     index = row + i * 6

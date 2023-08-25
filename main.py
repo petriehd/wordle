@@ -41,12 +41,12 @@ def main():
         if event.key == pygame.K_RETURN and currCol == 5:
           outcome = CheckWord(currWord, correct, guessList, currRow, Board, window)
           if outcome[0]:
+            availableWords = GetPossibleWords(outcome[1], guessList, currWord)
+            PrintAvailableWords(availableWords, window)
+            
             currRow += 1
             currCol = 0
             currWord = ''
-
-            availableWords = GetPossibleWords(outcome[1], guessList)
-            PrintAvailableWords(availableWords, window)
             
 
         

@@ -95,9 +95,9 @@ def CheckWord(currWord, answer, guessList, row, board, window):
 
   return (True, pattern)
 
-def GetPossibleWords(pattern, guessList):
+def GetPossibleWords(pattern, guessList, currWord):
   
-  available = guessList
+  available = [guess for guess in guessList if guess[0] != currWord]
   for char in pattern:
     if char == 0:
       continue

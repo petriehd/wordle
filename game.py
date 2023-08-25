@@ -30,11 +30,24 @@ class Tile:
     text = font.render(self.letter, True, textColour)
     surface.blit(text, self.rect.center)
 
-def InitBoard(boardRect):
+def InitScreen():
+  width = 1100
+  height = 700
+  window = pygame.display.set_mode((width, height))
+  pygame.display.set_caption('Wordle')
+  window.fill(Colours.BACKGROUND)
+
+  return window
+
+def InitBoard(window):
+  playBoardSize = (350,40,400,474)
+  playBoardRect = pygame.Rect(playBoardSize)
+  pygame.draw.rect(window, Colours.GRID_BORDER, playBoardRect)
+
   Board = []
   for i in range(5): 
     for j in range(6): 
-      Board.append(Tile((i,j), boardRect))
+      Board.append(Tile((i,j), playBoardRect))
 
   return Board
 
@@ -47,16 +60,6 @@ def GetWordList(filePath):
     
     return output
   
-def PrintBoard(board):
-  # Clears terminal
-  os.system('cls' if os.name == 'nt' else 'clear')
-
-  for row in board:
-    output = '|'
-    for i in row: 
-      output = output + i + '|' 
-    print(output)
-
 def CheckWord(currWord, answer, guessList, row, board, window):
   font = pygame.font.Font(None, 36)
   if not WordInGuessList(currWord, guessList):
@@ -92,9 +95,9 @@ def CheckWord(currWord, answer, guessList, row, board, window):
 
   return (True, pattern)
 
-def GetPossibleWords(pattern, guessList):
+def GetPossibleWords(pattern, guessList, currWord):
   
-  available = guessList
+  available = [guess for guess in guessList if guess[0] != currWord]
   for char in pattern:
     if char == 0:
       continue
@@ -107,21 +110,32 @@ def GetPossibleWords(pattern, guessList):
   return available
 
 def PrintAvailableWords(available, window):
-  sortedWords = sorted(available, key=lambda x: x[1], reverse=True)
+  # Reset available words board
+  availWordBoardSize = (50,20, 280, 650)
+  availWordBoardRect = pygame.Rect(availWordBoardSize)
+  pygame.draw.rect(window, Colours.BACKGROUND, availWordBoardRect)
+
+  # Sort Listt of words
+  sortedWords = sorted(available, key=lambda x: x[1], reverse=False)
   count = len(sortedWords)
-  top10 = sortedWords[:20]
+  top20 = sortedWords[:20]
 
-  font = pygame.font.Font(None, 36)
-  wordCount = font.render(f"Words Available: {count}", True, Colours.GRID_BORDER)
-  window.blit(wordCount, Locations.AVAILABLE_WORD_COUNT)
-  wordLocation = Locations.AVAILABLE_WORD
-  for word in top10:
-    wordText = font.render(f"{word[0]}", True, Colours.GRID_BORDER)
+  fontHeading = pygame.font.Font(None, 36)
+  fontNormal = pygame.font.Font(None, 32)
+  wordCountText = fontHeading.render(f"Words Available: {count}", True, Colours.GRID_BORDER)
+  window.blit(wordCountText, Locations.AVAILABLE_WORD_COUNT)
+
+  wordLocation = Locations.AVAILABLE_WORDS
+  top20Text = fontNormal.render('Top 20 Words:', True, Colours.GRID_BORDER)
+  window.blit(top20Text, wordLocation)
+
+  for word in top20:
+    wordLocation = (wordLocation[0], wordLocation[1] + 27)
+    wordText = fontNormal.render(f"{word[0]}", True, Colours.GRID_BORDER)
     window.blit(wordText, wordLocation)
-    wordLocation = (wordLocation[0], wordLocation[1] + 25)
 
 
-  return (count, top10)
+  return (count, top20)
 
 def WordInGuessList(word, guessList):
   for guess in guessList:

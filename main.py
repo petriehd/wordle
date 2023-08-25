@@ -14,17 +14,20 @@ pygame.display.set_caption('Wordle')
 window.fill(Colours.BACKGROUND)
 
 # Playing board formatting
-boardSize = (350,40,400,474)
-boardRect = pygame.Rect(boardSize)
-pygame.draw.rect(window, Colours.GRID_BORDER, boardRect)
+playBoardSize = (350,40,400,474)
+playBoardRect = pygame.Rect(playBoardSize)
+pygame.draw.rect(window, Colours.GRID_BORDER, playBoardRect)
 
-Board = InitBoard(boardSize)
-for tile in Board:
-  tile.draw(window)
 
 def main():
+  Board = InitBoard(playBoardSize)
+  for tile in Board:
+    tile.draw(window)
+
   correct = random.choice(guessList)[0]
   print(correct)
+
+
 
   play = True
   currRow = 0
@@ -58,6 +61,7 @@ def main():
 
             availableWords = GetPossibleWords(outcome[1], guessList)
             PrintAvailableWords(availableWords, window)
+            
 
         
     pygame.display.update()

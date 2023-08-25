@@ -6,28 +6,14 @@ guessList = GetWordList('wordFrequency.csv')
 
 pygame.init()
 
-# Screen formatting
-windowWidth = 1100
-windowHeight = 700
-window = pygame.display.set_mode((windowWidth, windowHeight))
-pygame.display.set_caption('Wordle')
-window.fill(Colours.BACKGROUND)
-
-# Playing board formatting
-playBoardSize = (350,40,400,474)
-playBoardRect = pygame.Rect(playBoardSize)
-pygame.draw.rect(window, Colours.GRID_BORDER, playBoardRect)
-
-
 def main():
-  Board = InitBoard(playBoardSize)
+  window = InitScreen()
+  Board = InitBoard(window)
   for tile in Board:
     tile.draw(window)
 
   correct = random.choice(guessList)[0]
   print(correct)
-
-
 
   play = True
   currRow = 0

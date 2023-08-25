@@ -30,11 +30,24 @@ class Tile:
     text = font.render(self.letter, True, textColour)
     surface.blit(text, self.rect.center)
 
-def InitBoard(boardRect):
+def InitScreen():
+  width = 1100
+  height = 700
+  window = pygame.display.set_mode((width, height))
+  pygame.display.set_caption('Wordle')
+  window.fill(Colours.BACKGROUND)
+
+  return window
+
+def InitBoard(window):
+  playBoardSize = (350,40,400,474)
+  playBoardRect = pygame.Rect(playBoardSize)
+  pygame.draw.rect(window, Colours.GRID_BORDER, playBoardRect)
+
   Board = []
   for i in range(5): 
     for j in range(6): 
-      Board.append(Tile((i,j), boardRect))
+      Board.append(Tile((i,j), playBoardRect))
 
   return Board
 

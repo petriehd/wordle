@@ -20,6 +20,7 @@ def main():
   currCol = 0
   currWord = ''
   availableWords = []
+  pattern = [0,0,0,0,0]
   while (play):
     for event in pygame.event.get():
       index = currRow + currCol * 6
@@ -39,7 +40,7 @@ def main():
           currWord += key
 
         if event.key == pygame.K_RETURN and currCol == 5:
-          outcome = CheckWord(currWord, correct, guessList, currRow, Board, window)
+          outcome = CheckWord(currWord, correct, guessList, currRow, Board, window, pattern)
           if outcome[0]:
             availableWords = GetPossibleWords(outcome[1], guessList, currWord)
             PrintAvailableWords(availableWords, window)
@@ -54,7 +55,3 @@ def main():
 
 
 main()
-
-
-
-  

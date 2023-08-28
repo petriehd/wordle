@@ -60,40 +60,45 @@ def GetWordList(filePath):
     
     return output
   
-def CheckWord(currWord, answer, guessList, row, board, window):
+def CheckWord(currWord, answer, guessList, row, board, window, pattern):
   font = pygame.font.Font(None, 36)
   if not WordInGuessList(currWord, guessList):
     text = font.render("Not a valid Word!", True, Colours.GRID_BORDER)
     window.blit(text, Locations.BOARD_PRINTOUT)
     return (False, None)
   
-  # Stops multiple tiles of same letter being flagged as valid
-  # Can pull out all below into seperate function
-  pattern = [0] * 5
-  lettersRemaining = answer
-  for i in range(5):
-    index = row + i * 6
-    if currWord[i] == answer[i]:
-      board[index].colour = Colours.TILE_HIT
-      board[index].drawLetter(window)
-      lettersRemaining = lettersRemaining[:i] + lettersRemaining[i + 1:]
-
-      # working on pattern identification
-      pattern[i] = currWord[i]
-    elif currWord[i] in lettersRemaining:
-      board[index].colour = Colours.TILE_HIT_OTHER
-      board[index].drawLetter(window)
-
-      letterFoundIndex = lettersRemaining.index(currWord[i])
-      lettersRemaining = lettersRemaining[:letterFoundIndex] + lettersRemaining[letterFoundIndex + 1:]
-    
-      # working on pattern identification
-      pattern.append(currWord[i])
-    else:
-      board[index].colour = Colours.TILE_INVALID
-      board[index].drawLetter(window)
+  pattern = CheckLetters(currWord, answer, row, board, window, pattern)
 
   return (True, pattern)
+
+def CheckLetters(currWord, answer, row, board, window, pattern):
+  lettersRemaining = answer
+  for char in currWord:
+    charIndex = currWord.index(char)
+    boardIndex = row + charIndex * 6
+
+    if char == answer[charIndex]:
+      board[boardIndex].colour = Colours.TILE_HIT
+      board[boardIndex].drawLetter(window)
+      # Remove from available letters to avoid multiple hits for same letter
+      lettersRemaining = lettersRemaining[:charIndex] + lettersRemaining[charIndex + 1:]
+      # Add to pattern
+      pattern[charIndex] = char
+    elif char in lettersRemaining:
+      board[boardIndex].colour = Colours.TILE_HIT_OTHER
+      board[boardIndex].drawLetter(window)
+      # Remove from available letters to avoid multiple hits for same letter
+      letterIndex = lettersRemaining.index(char)
+      lettersRemaining = lettersRemaining[:letterIndex] + lettersRemaining[letterIndex + 1:]
+      # Add to pattern
+      pattern.append(char)
+    else:
+      board[boardIndex].colour = Colours.TILE_INVALID
+      board[boardIndex].drawLetter(window)
+
+  return pattern
+
+
 
 def GetPossibleWords(pattern, guessList, currWord):
   

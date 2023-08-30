@@ -2,7 +2,10 @@ from game import *
 from resources import Colours
 import random, pygame
 
-guessList = GetWordList('wordFrequency.csv')
+guessList = GetWordList('wordsFinal.csv')
+
+guessList.sort(key = lambda x: float(x[1]), reverse=True)
+
 
 pygame.init()
 

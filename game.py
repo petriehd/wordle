@@ -55,9 +55,9 @@ def GetWordList(filePath):
   with open(filePath, 'r') as file:
     temp = file.read().split('\n')
     output = []
-    for i in range(len(temp)):
-      output.append(temp[i].split(','))
-    
+    for i in range(len(temp) - 1):
+      line = temp[i].split(',')
+      output.append([line[0], line[1]])
     return output
   
 def CheckWord(currWord, answer, guessList, row, board, window, pattern):

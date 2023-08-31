@@ -1,5 +1,6 @@
 import os, pygame
 from resources import Colours, Locations
+import pandas as pd
 
 BORDER_WIDTH = 5
 
@@ -52,17 +53,15 @@ def InitBoard(window):
   return Board
 
 def GetWordList(filePath):
-  with open(filePath, 'r') as file:
-    temp = file.read().split('\n')
-    output = []
-    for i in range(len(temp) - 1):
-      line = temp[i].split(',')
-      output.append([line[0], line[1]])
-    return output
+  output = pd.read_csv(filePath, header=None);
+  output = output.iloc[:, :2]
+
+  return output
   
 def CheckWord(currWord, answer, guessList, row, board, window, pattern):
   font = pygame.font.Font(None, 36)
-  if not WordInGuessList(currWord, guessList):
+
+  if guessList[0].str.contains(currWord, case=False, regex=True).empty:
     text = font.render("Not a valid Word!", True, Colours.GRID_BORDER)
     window.blit(text, Locations.BOARD_PRINTOUT)
     return (False, None)
@@ -98,19 +97,20 @@ def CheckLetters(currWord, answer, row, board, window, pattern):
 
   return pattern
 
-
-
 def GetPossibleWords(pattern, guessList, currWord):
   
-  available = [guess for guess in guessList if guess[0] != currWord]
+  available = guessList.iloc[:, 0]
+  available = available[available != currWord]
+  print(available)
   for char in pattern:
     if char == 0:
       continue
     index = pattern.index(char)
     if index < 5:
-      available = [guess for guess in available if char == guess[0][index]]
+      available = available.apply(lambda guess: guess[index] == char)
+      print(available)
     else:
-      available = [guess for guess in available if char in guess[0]]
+      available = available[available.str.contains(char)]
 
   return available
 

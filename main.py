@@ -1,10 +1,9 @@
 from game import *
 from resources import Colours
 import random, pygame
+import pandas as pd
 
 guessList = GetWordList('wordsFinal.csv')
-
-guessList.sort(key = lambda x: float(x[1]), reverse=True)
 
 
 pygame.init()
@@ -15,8 +14,7 @@ def main():
   for tile in Board:
     tile.draw(window)
 
-  correct = random.choice(guessList)[0]
-  print(correct)
+  correct = guessList.sample(n = 1).iloc[0, 0]
 
   play = True
   currRow = 0

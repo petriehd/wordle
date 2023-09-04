@@ -72,8 +72,7 @@ def CheckWord(currWord, answer, guessList, row, board, window, pattern):
 
 def CheckLetters(currWord, answer, row, board, window, pattern):
   lettersRemaining = answer
-  for char in currWord:
-    charIndex = currWord.index(char)
+  for charIndex, char in enumerate(currWord):
     boardIndex = row + charIndex * 6
 
     if char == answer[charIndex]:
@@ -83,7 +82,7 @@ def CheckLetters(currWord, answer, row, board, window, pattern):
       lettersRemaining = lettersRemaining[:charIndex] + lettersRemaining[charIndex + 1:]
       # Add to pattern
       pattern[charIndex] = char
-    elif char in lettersRemaining:
+    elif char in answer and char in lettersRemaining:
       board[boardIndex].colour = Colours.TILE_HIT_OTHER
       board[boardIndex].drawLetter(window)
       # Remove from available letters to avoid multiple hits for same letter
@@ -95,13 +94,13 @@ def CheckLetters(currWord, answer, row, board, window, pattern):
       board[boardIndex].colour = Colours.TILE_INVALID
       board[boardIndex].drawLetter(window)
 
+
   return pattern
 
 def GetPossibleWords(pattern, guessList, currWord):
   
   available = guessList
-  # Can remove this
-  # available = available[available != currWord]
+  available = available[available != currWord]
   for char in pattern:
     if char == 0:
       continue

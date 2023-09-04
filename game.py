@@ -119,7 +119,7 @@ def PrintAvailableWords(available, window):
   pygame.draw.rect(window, Colours.BACKGROUND, availWordBoardRect)
 
   # Sort Listt of words
-  sortedWords = available.sort_values(by=available.columns[1])
+  sortedWords = available.sort_values(by=available.columns[1], ascending=False)
   count = len(sortedWords)
   top20 = sortedWords.head(20)
 

@@ -61,7 +61,7 @@ def GetWordList(filePath):
 def CheckWord(currWord, answer, guessList, row, board, window, pattern):
   font = pygame.font.Font(None, 36)
 
-  if guessList[0].str.contains(currWord, case=False, regex=True).empty:
+  if currWord not in guessList.iloc[:, 0].values:
     text = font.render("Not a valid Word!", True, Colours.GRID_BORDER)
     window.blit(text, Locations.BOARD_PRINTOUT)
     return (False, None)
@@ -72,8 +72,7 @@ def CheckWord(currWord, answer, guessList, row, board, window, pattern):
 
 def CheckLetters(currWord, answer, row, board, window, pattern):
   lettersRemaining = answer
-  for char in currWord:
-    charIndex = currWord.index(char)
+  for charIndex, char in enumerate(currWord):
     boardIndex = row + charIndex * 6
 
     if char == answer[charIndex]:
@@ -83,7 +82,7 @@ def CheckLetters(currWord, answer, row, board, window, pattern):
       lettersRemaining = lettersRemaining[:charIndex] + lettersRemaining[charIndex + 1:]
       # Add to pattern
       pattern[charIndex] = char
-    elif char in lettersRemaining:
+    elif char in answer and char in lettersRemaining:
       board[boardIndex].colour = Colours.TILE_HIT_OTHER
       board[boardIndex].drawLetter(window)
       # Remove from available letters to avoid multiple hits for same letter
@@ -95,22 +94,21 @@ def CheckLetters(currWord, answer, row, board, window, pattern):
       board[boardIndex].colour = Colours.TILE_INVALID
       board[boardIndex].drawLetter(window)
 
+
   return pattern
 
 def GetPossibleWords(pattern, guessList, currWord):
   
-  available = guessList.iloc[:, 0]
+  available = guessList
   available = available[available != currWord]
-  print(available)
   for char in pattern:
     if char == 0:
       continue
     index = pattern.index(char)
     if index < 5:
-      available = available.apply(lambda guess: guess[index] == char)
-      print(available)
+      available = available[available.iloc[:, 0].str[index] == char]
     else:
-      available = available[available.str.contains(char)]
+      available = available[available.iloc[:,0].str.contains(char)]
 
   return available
 
@@ -121,9 +119,9 @@ def PrintAvailableWords(available, window):
   pygame.draw.rect(window, Colours.BACKGROUND, availWordBoardRect)
 
   # Sort Listt of words
-  sortedWords = sorted(available, key=lambda x: x[1], reverse=False)
+  sortedWords = available.sort_values(by=available.columns[1], ascending=False)
   count = len(sortedWords)
-  top20 = sortedWords[:20]
+  top20 = sortedWords.head(20)
 
   fontHeading = pygame.font.Font(None, 36)
   fontNormal = pygame.font.Font(None, 32)
@@ -134,9 +132,9 @@ def PrintAvailableWords(available, window):
   top20Text = fontNormal.render('Top 20 Words:', True, Colours.GRID_BORDER)
   window.blit(top20Text, wordLocation)
 
-  for word in top20:
+  for index, row in top20.iterrows():
     wordLocation = (wordLocation[0], wordLocation[1] + 27)
-    wordText = fontNormal.render(f"{word[0]}", True, Colours.GRID_BORDER)
+    wordText = fontNormal.render(f"{row[0]}", True, Colours.GRID_BORDER)
     window.blit(wordText, wordLocation)
 
 

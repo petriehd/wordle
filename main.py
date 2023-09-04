@@ -15,6 +15,7 @@ def main():
     tile.draw(window)
 
   correct = guessList.sample(n = 1).iloc[0, 0]
+  print(correct)
 
   play = True
   currRow = 0
@@ -22,11 +23,14 @@ def main():
   currWord = ''
   availableWords = []
   pattern = [0,0,0,0,0]
+
   while (play):
     for event in pygame.event.get():
       index = currRow + currCol * 6
+
       if event.type == pygame.QUIT:
         play = False
+
       if event.type == pygame.KEYDOWN:
         key = chr(event.key)
         if event.key == pygame.K_BACKSPACE and currCol > 0:

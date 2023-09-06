@@ -59,7 +59,7 @@ def GetWordList(filePath):
   # Nomalise data
   min = output.iloc[:, 1].min()
   max = output.iloc[:, 1].max()
-  output[2] = (output.iloc[:, 1] - min) / (max - min)
+  output[2] = round((output.iloc[:, 1] - min) / (max - min), 5)
 
   return output
   
@@ -94,7 +94,8 @@ def CheckLetters(currWord, answer, row, board, window, pattern, lettersNotInWord
       letterIndex = lettersRemaining.index(char)
       lettersRemaining = lettersRemaining[:letterIndex] + lettersRemaining[letterIndex + 1:]
       # Add to pattern
-      pattern.append(char)
+      if char not in pattern:
+        pattern.append(char)
     else:
       board[boardIndex].colour = Colours.TILE_INVALID
       board[boardIndex].drawLetter(window)
@@ -153,10 +154,10 @@ def PrintAvailableWords(available, window):
     wordText = fontNormal.render(f"{row[0]}: ", True, Colours.GRID_BORDER)
     window.blit(wordText, wordLocation)
 
-    # Currently not printing out probability as below
-    probLocation = (wordLocation[0] + 70, wordLocation[1])
-    probText = fontNormal.render(f"{float(row[2])}", True, Colours.GRID_BORDER)
-    window.blit(probText, probLocation)
+    # # Not printing probabilities at the moment as taking up too much space
+    # probLocation = (wordLocation[0] + 85, wordLocation[1])
+    # probText = fontNormal.render(f"{float(row[2])}", True, Colours.GRID_BORDER)
+    # window.blit(probText, probLocation)
 
 
   return (count, top20)

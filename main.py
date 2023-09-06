@@ -53,9 +53,10 @@ def main():
             currRow += 1
             currCol = 0
             currWord = ''
+            print(pattern)
             
 
-        
+    
     pygame.display.update()
 
 

@@ -56,6 +56,11 @@ def GetWordList(filePath):
   output = pd.read_csv(filePath, header=None);
   output = output.iloc[:, :2]
 
+  # Nomalise data
+  min = output.iloc[:, 1].min()
+  max = output.iloc[:, 1].max()
+  output[2] = (output.iloc[:, 1] - min) / (max - min)
+
   return output
   
 def CheckWord(currWord, answer, guessList, row, board, window, pattern, lettersNotInWord):
@@ -127,11 +132,12 @@ def PrintAvailableWords(available, window):
   availWordBoardRect = pygame.Rect(availWordBoardSize)
   pygame.draw.rect(window, Colours.BACKGROUND, availWordBoardRect)
 
-  # Sort Listt of words
+  # Sort List of words
   sortedWords = available.sort_values(by=available.columns[1], ascending=False)
   count = len(sortedWords)
   top20 = sortedWords.head(20)
 
+  # Format headings and print headings
   fontHeading = pygame.font.Font(None, 36)
   fontNormal = pygame.font.Font(None, 32)
   wordCountText = fontHeading.render(f"Words Available: {count}", True, Colours.GRID_BORDER)
@@ -141,10 +147,16 @@ def PrintAvailableWords(available, window):
   top20Text = fontNormal.render('Top 20 Words:', True, Colours.GRID_BORDER)
   window.blit(top20Text, wordLocation)
 
+  # Loop through top 20 and print out words and their probability
   for index, row in top20.iterrows():
     wordLocation = (wordLocation[0], wordLocation[1] + 27)
-    wordText = fontNormal.render(f"{row[0]}", True, Colours.GRID_BORDER)
+    wordText = fontNormal.render(f"{row[0]}: ", True, Colours.GRID_BORDER)
     window.blit(wordText, wordLocation)
+
+    # Currently not printing out probability as below
+    probLocation = (wordLocation[0] + 70, wordLocation[1])
+    probText = fontNormal.render(f"{float(row[2])}", True, Colours.GRID_BORDER)
+    window.blit(probText, probLocation)
 
 
   return (count, top20)

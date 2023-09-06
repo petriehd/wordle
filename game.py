@@ -56,9 +56,14 @@ def GetWordList(filePath):
   output = pd.read_csv(filePath, header=None);
   output = output.iloc[:, :2]
 
+  # Nomalise data
+  min = output.iloc[:, 1].min()
+  max = output.iloc[:, 1].max()
+  output[2] = round((output.iloc[:, 1] - min) / (max - min), 5)
+
   return output
   
-def CheckWord(currWord, answer, guessList, row, board, window, pattern):
+def CheckWord(currWord, answer, guessList, row, board, window, pattern, lettersNotInWord):
   font = pygame.font.Font(None, 36)
 
   if currWord not in guessList.iloc[:, 0].values:
@@ -66,11 +71,11 @@ def CheckWord(currWord, answer, guessList, row, board, window, pattern):
     window.blit(text, Locations.BOARD_PRINTOUT)
     return (False, None)
   
-  pattern = CheckLetters(currWord, answer, row, board, window, pattern)
+  pattern = CheckLetters(currWord, answer, row, board, window, pattern, lettersNotInWord)
 
   return (True, pattern)
 
-def CheckLetters(currWord, answer, row, board, window, pattern):
+def CheckLetters(currWord, answer, row, board, window, pattern, lettersNotInWord):
   lettersRemaining = answer
   for charIndex, char in enumerate(currWord):
     boardIndex = row + charIndex * 6
@@ -89,18 +94,28 @@ def CheckLetters(currWord, answer, row, board, window, pattern):
       letterIndex = lettersRemaining.index(char)
       lettersRemaining = lettersRemaining[:letterIndex] + lettersRemaining[letterIndex + 1:]
       # Add to pattern
-      pattern.append(char)
+      if char not in pattern:
+        pattern.append(char)
     else:
       board[boardIndex].colour = Colours.TILE_INVALID
       board[boardIndex].drawLetter(window)
+      lettersNotInWord.append(char)
+
 
 
   return pattern
 
-def GetPossibleWords(pattern, guessList, currWord):
+def GetPossibleWords(pattern, guessList, currWord, lettersNotInWord):
   
   available = guessList
+  # First filter out words that contain letters that are not in the word
+  for char in lettersNotInWord:
+    available = available[~available.iloc[:,0].str.contains(char)]
+  
+  # Remove current word as it was most recently tested word
   available = available[available != currWord]
+
+  # Then loop through pattern and filter down available words depending on location in pattern
   for char in pattern:
     if char == 0:
       continue
@@ -118,11 +133,12 @@ def PrintAvailableWords(available, window):
   availWordBoardRect = pygame.Rect(availWordBoardSize)
   pygame.draw.rect(window, Colours.BACKGROUND, availWordBoardRect)
 
-  # Sort Listt of words
+  # Sort List of words
   sortedWords = available.sort_values(by=available.columns[1], ascending=False)
   count = len(sortedWords)
   top20 = sortedWords.head(20)
 
+  # Format headings and print headings
   fontHeading = pygame.font.Font(None, 36)
   fontNormal = pygame.font.Font(None, 32)
   wordCountText = fontHeading.render(f"Words Available: {count}", True, Colours.GRID_BORDER)
@@ -132,10 +148,16 @@ def PrintAvailableWords(available, window):
   top20Text = fontNormal.render('Top 20 Words:', True, Colours.GRID_BORDER)
   window.blit(top20Text, wordLocation)
 
+  # Loop through top 20 and print out words and their probability
   for index, row in top20.iterrows():
     wordLocation = (wordLocation[0], wordLocation[1] + 27)
-    wordText = fontNormal.render(f"{row[0]}", True, Colours.GRID_BORDER)
+    wordText = fontNormal.render(f"{row[0]}: ", True, Colours.GRID_BORDER)
     window.blit(wordText, wordLocation)
+
+    # # Not printing probabilities at the moment as taking up too much space
+    # probLocation = (wordLocation[0] + 85, wordLocation[1])
+    # probText = fontNormal.render(f"{float(row[2])}", True, Colours.GRID_BORDER)
+    # window.blit(probText, probLocation)
 
 
   return (count, top20)

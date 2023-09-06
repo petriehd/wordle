@@ -5,7 +5,6 @@ import pandas as pd
 
 guessList = GetWordList('wordsFinal.csv')
 
-
 pygame.init()
 
 def main():
@@ -23,6 +22,7 @@ def main():
   currWord = ''
   availableWords = []
   pattern = [0,0,0,0,0]
+  lettersNotInWord = []
 
   while (play):
     for event in pygame.event.get():
@@ -45,17 +45,18 @@ def main():
           currWord += key
 
         if event.key == pygame.K_RETURN and currCol == 5:
-          outcome = CheckWord(currWord, correct, guessList, currRow, Board, window, pattern)
+          outcome = CheckWord(currWord, correct, guessList, currRow, Board, window, pattern, lettersNotInWord)
           if outcome[0]:
-            availableWords = GetPossibleWords(outcome[1], guessList, currWord)
+            availableWords = GetPossibleWords(outcome[1], guessList, currWord, lettersNotInWord)
             PrintAvailableWords(availableWords, window)
             
             currRow += 1
             currCol = 0
             currWord = ''
+            print(pattern)
             
 
-        
+    
     pygame.display.update()
 
 

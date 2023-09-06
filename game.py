@@ -58,7 +58,7 @@ def GetWordList(filePath):
 
   return output
   
-def CheckWord(currWord, answer, guessList, row, board, window, pattern):
+def CheckWord(currWord, answer, guessList, row, board, window, pattern, lettersNotInWord):
   font = pygame.font.Font(None, 36)
 
   if currWord not in guessList.iloc[:, 0].values:
@@ -66,11 +66,11 @@ def CheckWord(currWord, answer, guessList, row, board, window, pattern):
     window.blit(text, Locations.BOARD_PRINTOUT)
     return (False, None)
   
-  pattern = CheckLetters(currWord, answer, row, board, window, pattern)
+  pattern = CheckLetters(currWord, answer, row, board, window, pattern, lettersNotInWord)
 
   return (True, pattern)
 
-def CheckLetters(currWord, answer, row, board, window, pattern):
+def CheckLetters(currWord, answer, row, board, window, pattern, lettersNotInWord):
   lettersRemaining = answer
   for charIndex, char in enumerate(currWord):
     boardIndex = row + charIndex * 6
@@ -93,14 +93,23 @@ def CheckLetters(currWord, answer, row, board, window, pattern):
     else:
       board[boardIndex].colour = Colours.TILE_INVALID
       board[boardIndex].drawLetter(window)
+      lettersNotInWord.append(char)
+
 
 
   return pattern
 
-def GetPossibleWords(pattern, guessList, currWord):
+def GetPossibleWords(pattern, guessList, currWord, lettersNotInWord):
   
   available = guessList
   available = available[available != currWord]
+  # First filter out words that contain letters that are not in the word
+  for char in lettersNotInWord:
+    nan = available[available.iloc[:,0].isna()]
+    print(nan)
+    available = available[available.iloc[:,0].str.contains(char)]
+
+  # Then loop through pattern and filter down available words depending on location in pattern
   for char in pattern:
     if char == 0:
       continue

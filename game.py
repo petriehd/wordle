@@ -102,12 +102,12 @@ def CheckLetters(currWord, answer, row, board, window, pattern, lettersNotInWord
 def GetPossibleWords(pattern, guessList, currWord, lettersNotInWord):
   
   available = guessList
-  available = available[available != currWord]
   # First filter out words that contain letters that are not in the word
   for char in lettersNotInWord:
-    nan = available[available.iloc[:,0].isna()]
-    print(nan)
-    available = available[available.iloc[:,0].str.contains(char)]
+    available = available[~available.iloc[:,0].str.contains(char)]
+  
+  # Remove current word as it was most recently tested word
+  available = available[available != currWord]
 
   # Then loop through pattern and filter down available words depending on location in pattern
   for char in pattern:

@@ -151,7 +151,7 @@ def PrintAvailableWords(available, window):
   # Loop through top 20 and print out words and their probability
   for index, row in top20.iterrows():
     wordLocation = (wordLocation[0], wordLocation[1] + 27)
-    wordText = fontNormal.render(f"{row[0]}: ", True, Colours.GRID_BORDER)
+    wordText = fontNormal.render(f"{row[0]}", True, Colours.GRID_BORDER)
     window.blit(wordText, wordLocation)
 
     # # Not printing probabilities at the moment as taking up too much space
@@ -202,3 +202,55 @@ def FilterWordFrequency(filePath, guessList):
 
   return output
 
+def PlayGame(window, Board, guessList):
+  correct = guessList.sample(n = 1).iloc[0, 0]
+  print(correct)
+
+  play = True
+  currRow = 0
+  currCol = 0
+  currWord = ''
+  availableWords = []
+  pattern = [0,0,0,0,0]
+  lettersNotInWord = []
+
+  while (play):
+    for event in pygame.event.get():
+      index = currRow + currCol * 6
+
+      if event.type == pygame.QUIT:
+        play = False
+
+      if event.type == pygame.KEYDOWN:
+        key = chr(event.key)
+        if event.key == pygame.K_BACKSPACE and currCol > 0:
+          currCol -= 1
+          Board[index - 6].draw(window)
+          currWord = currWord[:currCol] + currWord[currCol + 1:]
+
+        if 'a' <= key <= 'z' and currCol < 5:
+          Board[index].letter = key
+          Board[index].drawLetter(window)
+          currCol += 1
+          currWord += key
+
+        if event.key == pygame.K_RETURN and currCol == 5:
+          outcome = CheckWord(currWord, correct, guessList, currRow, Board, window, pattern, lettersNotInWord)
+          if outcome[0]:
+            availableWords = GetPossibleWords(outcome[1], guessList, currWord, lettersNotInWord)
+            PrintAvailableWords(availableWords, window)
+            
+            currRow += 1
+            currCol = 0
+            currWord = ''
+            print(pattern)
+            
+    
+    pygame.display.update()
+
+def CheckGameWon(pattern):
+  for i in range(5):
+    if pattern[i] == 0:
+      return False
+    
+  return True

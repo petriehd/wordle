@@ -9,11 +9,19 @@ pygame.init()
 
 def main():
   window = InitScreen()
-  Board = InitBoard(window)
-  for tile in Board:
-    tile.draw(window)
 
-  PlayGame(window, Board, guessList)
+  Active = True
+  while(Active):
+    gameCondition = PlayGame(window, guessList)
+    if gameCondition == -1:
+      Active = False
+
+    # Can add in button to click replay below
+    # For now, will just continue to rerun
+    #else if gameCondition == 1:
+
+  
+  
 
 
 main()

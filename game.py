@@ -202,7 +202,11 @@ def FilterWordFrequency(filePath, guessList):
 
   return output
 
-def PlayGame(window, Board, guessList):
+def PlayGame(window, guessList):
+  Board = InitBoard(window)
+  for tile in Board:
+    tile.draw(window)
+
   correct = guessList.sample(n = 1).iloc[0, 0]
   print(correct)
 
@@ -213,6 +217,7 @@ def PlayGame(window, Board, guessList):
   availableWords = []
   pattern = [0,0,0,0,0]
   lettersNotInWord = []
+  endCondition = 0
 
   while (play):
     for event in pygame.event.get():
@@ -220,6 +225,7 @@ def PlayGame(window, Board, guessList):
 
       if event.type == pygame.QUIT:
         play = False
+        endCondition = -1
 
       if event.type == pygame.KEYDOWN:
         key = chr(event.key)
@@ -245,8 +251,14 @@ def PlayGame(window, Board, guessList):
             currWord = ''
             print(pattern)
             
-    
+            if CheckGameWon(pattern):
+              play = False
+              endCondition = 1
+              break
+
     pygame.display.update()
+  
+  return endCondition
 
 def CheckGameWon(pattern):
   for i in range(5):

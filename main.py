@@ -16,9 +16,11 @@ def main():
     if gameCondition == -1:
       Active = False
 
-    # Can add in button to click replay below
-    # For now, will just continue to rerun
-    #else if gameCondition == 1:
+      
+    # For creating restart button
+    #   
+    # elif gameCondition == 1:
+
 
   
   

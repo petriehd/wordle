@@ -266,3 +266,4 @@ def CheckGameWon(pattern):
       return False
     
   return True
+
